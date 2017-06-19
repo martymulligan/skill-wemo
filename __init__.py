@@ -49,7 +49,7 @@ class WemoSkill(MycroftSkill):
     def initialize(self):
         self.load_data_files(dirname(__file__))
 
-        smartplug_intent = IntentBuilder("SmartPlugIntent").\
+        smart_plug_intent = IntentBuilder("SmartPlugIntent").\
             require("SmartPlugKeyword").build()
         self.register_intent(smart_plug_intent, self.handle_smart_plug_intent)
 
