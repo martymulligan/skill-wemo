@@ -28,6 +28,7 @@ from os.path import dirname
 from adapt.intent import IntentBuilder
 from mycroft.skills.core import MycroftSkill
 from mycroft.util.log import getLogger
+from ouimeaux.environment import Environment
 
 __author__ = 'martymulligan'
 
@@ -49,6 +50,18 @@ class WemoSkill(MycroftSkill):
     def initialize(self):
         self.load_data_files(dirname(__file__))
 
+        def on_switch(switch):
+            switch_message = "Detected a we moe switch named ", switch.name
+            self.speak(switch_message)
+
+        def on_motion(motion):
+            motion_message = "Motion detected on ", motion.name
+            self.speak(motion_message)
+
+        self.env = Environment(on_switch, on_motion)
+        self.env.start()
+        self.env.discover(seconds=5)
+
         smart_plug_intent = IntentBuilder("SmartPlugIntent").\
             require("SmartPlugKeyword").build()
         self.register_intent(smart_plug_intent, self.handle_smart_plug_intent)
@@ -60,7 +73,9 @@ class WemoSkill(MycroftSkill):
     # of a file in the dialog folder, and Mycroft speaks its contents when
     # the method is called.
     def handle_smart_plug_intent(self, message):
-        self.speak_dialog("welcome")
+        self.env.start()
+        switch = self.env.get_switch('porch lights')
+        switch.toggle()
 
     # The "stop" method defines what Mycroft does when told to stop during
     # the skill's execution. In this case, since the skill's functionality
