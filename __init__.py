@@ -28,6 +28,7 @@ from os.path import dirname
 from adapt.intent import IntentBuilder
 from mycroft.skills.core import MycroftSkill
 from mycroft.util.log import getLogger
+from ouimeaux.environment import Environment
 
 __author__ = 'martymulligan'
 
@@ -60,7 +61,7 @@ class WemoSkill(MycroftSkill):
     # of a file in the dialog folder, and Mycroft speaks its contents when
     # the method is called.
     def handle_smart_plug_intent(self, message):
-        self.speak_dialog("welcome")
+        self.speak_dialog("smart.plug")
 
     # The "stop" method defines what Mycroft does when told to stop during
     # the skill's execution. In this case, since the skill's functionality
