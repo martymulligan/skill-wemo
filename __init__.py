@@ -23,7 +23,9 @@
 
 # Import statements: the list of outside modules you'll be using in your
 # skills, whether from other files in mycroft-core or from external libraries
-from os.path import dirname
+import re
+
+from os.path import dirname, join
 
 from adapt.intent import IntentBuilder
 from mycroft.skills.core import MycroftSkill
@@ -45,26 +47,43 @@ class WemoSkill(MycroftSkill):
     def __init__(self):
         super(WemoSkill, self).__init__(name="WemoSkill")
 
+    ########
+
+
+    def initialize(self):
+        self.language = self.config_core.get('lang')
+        self.load_vocab_files(join(dirname(__file__), 'vocab', self.lang))
+        self.load_regex_files(join(dirname(__file__), 'regex', self.lang))
+        self.__build_lighting_intent()
+        self.__build_sensor_intent()
+        self.__build_automation_intent()
+
+    def __build_lighting_intent(self):
+        intent = IntentBuilder("LightingIntent").require("LightActionKeyword").require("Action").require("Entity").build()
+        # TODO - Locks, Temperature, Identity location
+        self.register_intent(intent, self.handle_lighting_intent)
+    #######
+
     # This method loads the files needed for the skill's functioning, and
     # creates and registers each intent that the skill uses
     def initialize(self):
         self.load_data_files(dirname(__file__))
-
-        def on_switch(switch):
-            switch_message = "Detected a we moe switch named ", switch.name
-            self.speak(switch_message)
-
-        def on_motion(motion):
-            motion_message = "Motion detected on ", motion.name
-            self.speak(motion_message)
-
         self.env = Environment(on_switch, on_motion)
         self.env.start()
         self.env.discover(seconds=5)
 
-        smart_plug_intent = IntentBuilder("SmartPlugIntent").\
-            require("SmartPlugKeyword").build()
-        self.register_intent(smart_plug_intent, self.handle_smart_plug_intent)
+    def on_switch(switch):
+        intent = IntentBuilder("WemoDeviceIntent-" % switch.id).\
+            require("WemoDeviceKeyword").build()
+        LOGGER.debug("Switch id: %s" % switch.id)
+        self.speak_dialog('wemo.detected', data={"device_name": switch.name})
+        self.register_intent(wemo_device_intent, self.handle_smart_plug_intent)
+
+    # def on_motion(motion):
+    #     motion_message = "Motion detected on ", motion.name
+    #     self.speak(motion_message)
+
+
 
     # The "handle_xxxx_intent" functions define Mycroft's behavior when
     # each of the skill's intents is triggered: in this case, he simply
@@ -72,10 +91,9 @@ class WemoSkill(MycroftSkill):
     # actually speak the text it's passed--instead, that text is the filename
     # of a file in the dialog folder, and Mycroft speaks its contents when
     # the method is called.
-    def handle_smart_plug_intent(self, message):
-        self.env.start()
-        switch = self.env.get_switch('porch lights')
-        switch.toggle()
+    def handle_wemo_device_intent(self, message):
+        device = message.data.device;
+        device.toggle()
 
     # The "stop" method defines what Mycroft does when told to stop during
     # the skill's execution. In this case, since the skill's functionality
