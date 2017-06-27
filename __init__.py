@@ -47,23 +47,6 @@ class WemoSkill(MycroftSkill):
     def __init__(self):
         super(WemoSkill, self).__init__(name="WemoSkill")
 
-    ########
-
-
-    def initialize(self):
-        self.language = self.config_core.get('lang')
-        self.load_vocab_files(join(dirname(__file__), 'vocab', self.lang))
-        self.load_regex_files(join(dirname(__file__), 'regex', self.lang))
-        self.__build_lighting_intent()
-        self.__build_sensor_intent()
-        self.__build_automation_intent()
-
-    def __build_lighting_intent(self):
-        intent = IntentBuilder("LightingIntent").require("LightActionKeyword").require("Action").require("Entity").build()
-        # TODO - Locks, Temperature, Identity location
-        self.register_intent(intent, self.handle_lighting_intent)
-    #######
-
     # This method loads the files needed for the skill's functioning, and
     # creates and registers each intent that the skill uses
     def initialize(self):
