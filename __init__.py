@@ -73,9 +73,10 @@ class WemoSkill(MycroftSkill):
         self.env.discover(seconds=5)
 
     def on_switch(switch):
-        intent = IntentBuilder("WemoDeviceIntent-" % switch.id).\
-            require("WemoDeviceKeyword").build()
-        LOGGER.debug("Switch id: %s" % switch.id)
+        LOGGER.debug("Switch: %s" % switch.name)
+        intent = IntentBuilder("WemoDeviceIntent-" % switch.name.replace(' ', '-')).\
+            require("WemoDeviceKeyword", {"device_name": switch.name}).build()
+
         self.speak_dialog('wemo.detected', data={"device_name": switch.name})
         self.register_intent(wemo_device_intent, self.handle_smart_plug_intent)
 
