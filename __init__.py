@@ -46,30 +46,27 @@ class WemoSkill(MycroftSkill):
     # The constructor of the skill, which calls MycroftSkill's constructor
     def __init__(self):
         super(WemoSkill, self).__init__(name="WemoSkill")
-    #
-    # # This method loads the files needed for the skill's functioning, and
-    # # creates and registers each intent that the skill uses
-    # def initialize(self):
+
+    # This method loads the files needed for the skill's functioning, and
+    # creates and registers each intent that the skill uses
+    def initialize(self):
         self.load_data_files(dirname(__file__))
-        self.env = Environment(on_switch, on_motion)
+
+        LOGGER.debug("Initializing WeMo Environment");
+        self.env = Environment(self.on_switch, self.on_motion)
         self.env.start()
-        self.env.discover(seconds=5)
+        self.env.discover(seconds=15)
 
     def on_switch(switch):
-        self.env.start()
-        self.env.discover(seconds=5)
         LOGGER.debug("Switch: %s" % switch.name)
-        intent = IntentBuilder("WemoDeviceIntent-" % switch.name.replace(' ', '-')).\
+        wemo_switch_intent = IntentBuilder("WemoDeviceIntent-" % switch.name.replace(' ', '-')).\
             require("WemoDeviceKeyword", {"device_name": switch.name}).build()
 
         self.speak_dialog('wemo.detected', data={"device_name": switch.name})
-        self.register_intent(wemo_device_intent, self.handle_smart_plug_intent)
+        self.register_intent(wemo_switch_intent, handle_wemo_switch_intent)
 
-    # def on_motion(motion):
-    #     motion_message = "Motion detected on ", motion.name
-    #     self.speak(motion_message)
-
-
+    def on_motion(motion):
+         motion_message = "Motion detected on ", motion.name
 
     # The "handle_xxxx_intent" functions define Mycroft's behavior when
     # each of the skill's intents is triggered: in this case, he simply
@@ -77,7 +74,7 @@ class WemoSkill(MycroftSkill):
     # actually speak the text it's passed--instead, that text is the filename
     # of a file in the dialog folder, and Mycroft speaks its contents when
     # the method is called.
-    def handle_wemo_device_intent(self, message):
+    def handle_wemo_switch_intent(self, message):
         device = message.data.device;
         device.toggle()
 
