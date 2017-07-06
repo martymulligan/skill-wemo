@@ -61,15 +61,25 @@ class WemoSkill(MycroftSkill):
         self.env.discover(seconds=15)
 
 
+
     # This method loads the files needed for the skill's functioning, and
     # creates and registers each intent that the skill uses
     def initialize(self):
         self.load_data_files(dirname(__file__))
-        wemo_switch_intent = IntentBuilder("WemoSwitchVerb"). \
-            require("WemoDeviceKeyword").build()
+        prefixes = [
+            'speak', 'say', 'repeat']
+        self.__register_prefixed_regex(prefixes, "(?P<Words>.*)")
+
+        intent = IntentBuilder("wemo:switch").require(
+            "WemoSwitchKeyword").require("Words").build()
+        self.register_intent(intent, self.handle_wemo_switch_intent)
 
 
 
+
+    def __register_prefixed_regex(self, prefixes, suffix_regex):
+        for prefix in prefixes:
+            self.register_regex(prefix + ' ' + suffix_regex)
 
     # The "handle_xxxx_intent" functions define Mycroft's behavior when
     # each of the skill's intents is triggered: in this case, he simply
@@ -78,7 +88,8 @@ class WemoSkill(MycroftSkill):
     # of a file in the dialog folder, and Mycroft speaks its contents when
     # the method is called.
     def handle_wemo_switch_intent(self, message):
-        device = message.data.device;
+        words = message.data.get("Words")
+        device = self.env.get_switch(words)
         device.toggle()
 
     # The "stop" method defines what Mycroft does when told to stop during
