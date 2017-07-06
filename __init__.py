@@ -68,6 +68,10 @@ class WemoSkill(MycroftSkill):
             'toggle', 'tockle', 'taco']
         self.__register_prefixed_regex(prefixes, "(?P<ToggleWords>.*)")
 
+        listprefixes = [
+            'list', 'list wemo', 'identify', 'identify wemo', 'get', 'get wemo']
+        self.__register_prefixed_regex(listprefixes, "(?P<ListWords>.*)")
+
         # switch intent
         intent = IntentBuilder("WemoSwitchIntent").require(
             "WemoSwitchKeyword").require("ToggleWords").build()
