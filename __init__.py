@@ -84,8 +84,8 @@ class WemoSkill(MycroftSkill):
 
         # list switches intent
         intent = IntentBuilder("WemoListSwitchesIntent").require(
-            "WemoListSwitchesKeyword").build()
-        self.register_intent(intent, self.handle_wemo_list_switches_intent)
+            "WemoListKeyword").require("ListWords").build()
+        self.register_intent(intent, self.handle_wemo_list_intent)
 
 
     def __register_prefixed_regex(self, prefixes, suffix_regex):
@@ -107,7 +107,9 @@ class WemoSkill(MycroftSkill):
         listwords = message.data.get("ListWords")
         if(listwords.index("switch") > 0 or listwords.index("plug") > 0):
             try:
-                self.env.list_switches();
+                switches = self.env.list_switches();
+                for switch in switches:
+                    self.speak("Wemo switch ".switch)
             except:
                 LOGGER.debug("Error occurred listing switches")
                 self.speak("uh uh")
