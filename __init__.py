@@ -107,14 +107,14 @@ class WemoSkill(MycroftSkill):
         listwords = message.data.get("ListWords")
         LOGGER.debug("GOT LIST WORDS")
         LOGGER.debug(listwords)
-        if(listwords.index("switches") > 0):
-            try:
-                switches = self.env.list_switches();
-                for switch in switches:
-                    self.speak("Wemo switch ".switch)
-            except:
-                LOGGER.debug("Error occurred listing switches")
-                self.speak("uh uh")
+
+        try:
+            switches = self.env.list_switches();
+            for switch in switches:
+                self.speak("Wemo switch ".switch)
+        except:
+            LOGGER.debug("Error occurred listing switches")
+            self.speak("uh uh")
 
 
 
