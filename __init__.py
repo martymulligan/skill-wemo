@@ -47,21 +47,19 @@ class WemoSkill(MycroftSkill):
     def __init__(self):
         super(WemoSkill, self).__init__(name="WemoSkill")
 
+    def on_switch(self, switch):
+        LOGGER.debug("Switch detected: %s" % switch.name)
+        self.speak('detected switch called ' + switch.name)
 
+    def on_motion(self, motion):
+        LOGGER.debug("Motion detected on ", motion.name)
 
     # This method loads the files needed for the skill's functioning, and
     # creates and registers each intent that the skill uses
     def initialize(self):
         LOGGER.debug("Initializing WeMo Environment");
 
-        def on_switch(switch):
-            LOGGER.debug("Switch detected: %s" % switch.name)
-            self.speak('detected switch called ' + switch.name)
-
-        def on_motion(motion):
-            LOGGER.debug("Motion detected on ", motion.name)
-
-        self.env = Environment(on_switch, on_motion)
+        self.env = Environment(self.on_switch, self.on_motion)
         self.env.start()
         self.env.discover(seconds=15)
 
@@ -90,13 +88,19 @@ class WemoSkill(MycroftSkill):
         words = message.data.get("Words")
         try:
             device = self.env.get_switch(words)
-
-
             device.toggle()
 
         except (UnknownDevice):
             self.speak("I don't know a device called " + words)
 
+    def handle_wemo_discover_intent(self, message):
+        try:
+            self.env = Environment(self.on_switch, self.on_motion)
+            self.env.start()
+            self.env.discover(seconds=15)
+
+        except:
+            self.speak("uh uh")
 
     # The "stop" method defines what Mycroft does when told to stop during
     # the skill's execution. In this case, since the skill's functionality
