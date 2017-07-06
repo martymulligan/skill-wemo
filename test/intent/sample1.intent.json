@@ -1,0 +1,8 @@
+{
+  "utterance": "Toggle Porch Lights",
+  "intent_type": "WemoSwitchIntent",
+  "intent": {
+    "SpeakKeyword": "toggle",
+   "Words": "porch lights"
+  }
+}
