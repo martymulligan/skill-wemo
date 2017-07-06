@@ -109,7 +109,8 @@ class WemoSkill(MycroftSkill):
         LOGGER.debug(listwords)
 
         try:
-            switches = self.env.list_switches();
+            self.env.start()
+            switches = self.env.list_switches()
             for switch in switches:
                 self.speak("Wemo switch ".switch)
         except:
