@@ -105,6 +105,8 @@ class WemoSkill(MycroftSkill):
 
     def handle_wemo_list_intent(self, message):
         listwords = message.data.get("ListWords")
+        LOGGER.debug("GOT LIST WORDS")
+        LOGGER.debug(listwords)
         if(listwords.index("switch") > 0 or listwords.index("plug") > 0):
             try:
                 switches = self.env.list_switches();
