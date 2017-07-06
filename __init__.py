@@ -66,7 +66,7 @@ class WemoSkill(MycroftSkill):
     def initialize(self):
         self.load_data_files(dirname(__file__))
         wemo_switch_intent = IntentBuilder("WemoSwitchVerb"). \
-            require("WemoDeviceKeyword").require().build()
+            require("WemoDeviceKeyword").build()
 
 
 
