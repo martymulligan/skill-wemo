@@ -66,17 +66,22 @@ class WemoSkill(MycroftSkill):
         self.load_data_files(dirname(__file__))
         prefixes = [
             'toggle', 'tockle', 'taco']
-        self.__register_prefixed_regex(prefixes, "(?P<Words>.*)")
+        self.__register_prefixed_regex(prefixes, "(?P<ToggleWords>.*)")
 
         # switch intent
         intent = IntentBuilder("WemoSwitchIntent").require(
-            "WemoSwitchKeyword").require("Words").build()
+            "WemoSwitchKeyword").require("ToggleWords").build()
         self.register_intent(intent, self.handle_wemo_switch_intent)
 
         # discover intent
         intent = IntentBuilder("WemoDiscoverIntent").require(
             "WemoDiscoverKeyword").build()
         self.register_intent(intent, self.handle_wemo_discover_intent)
+
+        # list switches intent
+        intent = IntentBuilder("WemoListSwitchesIntent").require(
+            "WemoListSwitchesKeyword").build()
+        self.register_intent(intent, self.handle_wemo_list_switches_intent)
 
 
     def __register_prefixed_regex(self, prefixes, suffix_regex):
@@ -85,22 +90,34 @@ class WemoSkill(MycroftSkill):
 
 
     def handle_wemo_switch_intent(self, message):
-        words = message.data.get("Words")
+        togglewords = message.data.get("ToggleWords")
         try:
-            device = self.env.get_switch(words)
+            device = self.env.get_switch(togglewords)
             device.toggle()
 
         except:
-            self.speak("I don't know a device called " + words)
+            LOGGER.debug("Unknown WeMo device: ", togglewords)
+            self.speak("I don't know a device called ", togglewords)
 
-    def handle_wemo_discover_intent(self, message):
-        try:
-            self.env = Environment(self.on_switch, self.on_motion)
-            self.env.start()
-            self.env.discover(seconds=15)
+    def handle_wemo_list_intent(self, message):
+        listwords = message.data.get("ListWords")
+        if(listwords.index("switch") > 0 or listwords.index("plug") > 0):
+            try:
+                self.env.list_switches();
+            except:
+                LOGGER.debug("Error occurred listing switches")
+                self.speak("uh uh")
 
-        except:
-            self.speak("uh uh")
+
+        def handle_wemo_discover_intent(self, message):
+            try:
+                self.env = Environment(self.on_switch, self.on_motion)
+                self.env.start()
+                self.env.discover(seconds=15)
+
+            except:
+                LOGGER.debug("Error occurred discovering devices")
+                self.speak("uh uh")
 
     # The "stop" method defines what Mycroft does when told to stop during
     # the skill's execution. In this case, since the skill's functionality
