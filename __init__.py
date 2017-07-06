@@ -70,7 +70,7 @@ class WemoSkill(MycroftSkill):
             'speak', 'say', 'repeat']
         self.__register_prefixed_regex(prefixes, "(?P<Words>.*)")
 
-        intent = IntentBuilder("wemo:switch").require(
+        intent = IntentBuilder("WemoSwitchIntent").require(
             "WemoSwitchKeyword").require("Words").build()
         self.register_intent(intent, self.handle_wemo_switch_intent)
 
@@ -89,6 +89,8 @@ class WemoSkill(MycroftSkill):
     # the method is called.
     def handle_wemo_switch_intent(self, message):
         words = message.data.get("Words")
+        LOGGER.debug("Switch Intent!!!")
+        LOGGER.debug(words)
         device = self.env.get_switch(words)
         device.toggle()
 
