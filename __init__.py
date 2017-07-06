@@ -109,15 +109,16 @@ class WemoSkill(MycroftSkill):
                 self.speak("uh uh")
 
 
-        def handle_wemo_discover_intent(self, message):
-            try:
-                self.env = Environment(self.on_switch, self.on_motion)
-                self.env.start()
-                self.env.discover(seconds=15)
 
-            except:
-                LOGGER.debug("Error occurred discovering devices")
-                self.speak("uh uh")
+    def handle_wemo_discover_intent(self, message):
+        try:
+            self.env = Environment(self.on_switch, self.on_motion)
+            self.env.start()
+            self.env.discover(seconds=15)
+
+        except:
+            LOGGER.debug("Error occurred discovering devices")
+            self.speak("uh uh")
 
     # The "stop" method defines what Mycroft does when told to stop during
     # the skill's execution. In this case, since the skill's functionality
