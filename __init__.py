@@ -107,7 +107,7 @@ class WemoSkill(MycroftSkill):
         listwords = message.data.get("ListWords")
         LOGGER.debug("GOT LIST WORDS")
         LOGGER.debug(listwords)
-        if(listwords.index("switch") > 0 or listwords.index("plug") > 0):
+        if(listwords.index("switches") > 0):
             try:
                 switches = self.env.list_switches();
                 for switch in switches:
