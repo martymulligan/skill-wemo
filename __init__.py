@@ -70,11 +70,15 @@ class WemoSkill(MycroftSkill):
             'toggle', 'tockle', 'taco']
         self.__register_prefixed_regex(prefixes, "(?P<Words>.*)")
 
+        # switch intent
         intent = IntentBuilder("WemoSwitchIntent").require(
             "WemoSwitchKeyword").require("Words").build()
         self.register_intent(intent, self.handle_wemo_switch_intent)
 
-
+        # discover intent
+        intent = IntentBuilder("WemoDiscoverIntent").require(
+            "WemoDiscoverKeyword").build()
+        self.register_intent(intent, self.handle_wemo_discover_intent)
 
 
     def __register_prefixed_regex(self, prefixes, suffix_regex):
@@ -86,9 +90,11 @@ class WemoSkill(MycroftSkill):
         words = message.data.get("Words")
         try:
             device = self.env.get_switch(words)
+
+
             device.toggle()
 
-        except (RuntimeError, TypeError):
+        except (UnknownDevice):
             self.speak("I don't know a device called " + words)
 
 
