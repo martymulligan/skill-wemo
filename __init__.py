@@ -46,12 +46,17 @@ class WemoSkill(MycroftSkill):
     # The constructor of the skill, which calls MycroftSkill's constructor
     def __init__(self):
         super(WemoSkill, self).__init__(name="WemoSkill")
+
+
+
+    # This method loads the files needed for the skill's functioning, and
+    # creates and registers each intent that the skill uses
+    def initialize(self):
         LOGGER.debug("Initializing WeMo Environment");
 
         def on_switch(switch):
             LOGGER.debug("Switch detected: %s" % switch.name)
-            # self.speak_dialog('wemo.detected', data={"device_name": switch.name})
-
+            self.speak('detected switch called ' + switch.name)
 
         def on_motion(motion):
             LOGGER.debug("Motion detected on ", motion.name)
@@ -60,14 +65,9 @@ class WemoSkill(MycroftSkill):
         self.env.start()
         self.env.discover(seconds=15)
 
-
-
-    # This method loads the files needed for the skill's functioning, and
-    # creates and registers each intent that the skill uses
-    def initialize(self):
         self.load_data_files(dirname(__file__))
         prefixes = [
-            'speak', 'say', 'repeat']
+            'toggle', 'tockle', 'taco']
         self.__register_prefixed_regex(prefixes, "(?P<Words>.*)")
 
         intent = IntentBuilder("WemoSwitchIntent").require(
@@ -81,18 +81,16 @@ class WemoSkill(MycroftSkill):
         for prefix in prefixes:
             self.register_regex(prefix + ' ' + suffix_regex)
 
-    # The "handle_xxxx_intent" functions define Mycroft's behavior when
-    # each of the skill's intents is triggered: in this case, he simply
-    # speaks a response. Note that the "speak_dialog" method doesn't
-    # actually speak the text it's passed--instead, that text is the filename
-    # of a file in the dialog folder, and Mycroft speaks its contents when
-    # the method is called.
+
     def handle_wemo_switch_intent(self, message):
         words = message.data.get("Words")
-        LOGGER.debug("Switch Intent!!!")
-        LOGGER.debug(words)
-        device = self.env.get_switch(words)
-        device.toggle()
+        try:
+            device = self.env.get_switch(words)
+            device.toggle()
+
+        except (RuntimeError, TypeError):
+            self.speak("I don't know a device called " + words)
+
 
     # The "stop" method defines what Mycroft does when told to stop during
     # the skill's execution. In this case, since the skill's functionality
