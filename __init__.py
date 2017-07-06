@@ -90,7 +90,7 @@ class WemoSkill(MycroftSkill):
             device = self.env.get_switch(words)
             device.toggle()
 
-        except (UnknownDevice):
+        except:
             self.speak("I don't know a device called " + words)
 
     def handle_wemo_discover_intent(self, message):
