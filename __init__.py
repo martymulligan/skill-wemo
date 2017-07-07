@@ -104,18 +104,19 @@ class WemoSkill(MycroftSkill):
             self.speak("I don't know a device called ", togglewords)
 
     def handle_wemo_list_intent(self, message):
+        # listwords are the type of thing you want to list
+        # like "mycroft list switches"
         listwords = message.data.get("ListWords")
-        LOGGER.debug("GOT LIST WORDS")
-        LOGGER.debug(listwords)
-
+        LOGGER.debug("Wemo list: ", listwords)
         try:
             self.env.start()
             switches = self.env.list_switches()
+            LOGGER.debug("Wemo switches: ", switches);
             for switch in switches:
                 self.speak("Wemo switch ".switch)
         except:
-            LOGGER.debug("Error occurred listing switches")
-            self.speak("uh uh")
+            LOGGER.debug("Error occurred listing Wemo switches")
+            self.speak("arh. ah.")
 
 
 
@@ -126,8 +127,8 @@ class WemoSkill(MycroftSkill):
             self.env.discover(seconds=15)
 
         except:
-            LOGGER.debug("Error occurred discovering devices")
-            self.speak("uh uh")
+            LOGGER.debug("Error occurred discovering Wemo devices")
+            self.speak("ahr. ah.")
 
     # The "stop" method defines what Mycroft does when told to stop during
     # the skill's execution. In this case, since the skill's functionality
