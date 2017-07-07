@@ -49,7 +49,7 @@ class WemoSkill(MycroftSkill):
 
     def on_switch(self, switch):
         LOGGER.debug("Switch detected: %s" % switch.name)
-        self.speak('detected switch called ' + switch.name)
+        self.speak('Discovered a switch named ' + switch.name)
 
     def on_motion(self, motion):
         LOGGER.debug("Motion detected on ", motion.name)
@@ -69,7 +69,7 @@ class WemoSkill(MycroftSkill):
         self.__register_prefixed_regex(prefixes, "(?P<ToggleWords>.*)")
 
         listprefixes = [
-            'list', 'list wemo', 'identify', 'identify wemo', 'get', 'get wemo']
+            'list wemo', 'identify wemo', 'get wemo']
         self.__register_prefixed_regex(listprefixes, "(?P<ListWords>.*)")
 
         # switch intent
@@ -83,7 +83,7 @@ class WemoSkill(MycroftSkill):
         self.register_intent(intent, self.handle_wemo_discover_intent)
 
         # list switches intent
-        intent = IntentBuilder("WemoListSwitchesIntent").require(
+        intent = IntentBuilder("WemoListIntent").require(
             "WemoListKeyword").require("ListWords").build()
         self.register_intent(intent, self.handle_wemo_list_intent)
 
@@ -107,14 +107,16 @@ class WemoSkill(MycroftSkill):
         # listwords are the type of thing you want to list
         # like "mycroft list switches"
         listwords = message.data.get("ListWords")
-        LOGGER.debug("Wemo list: ", listwords)
+        LOGGER.debug("Wemo list")
+        LOGGER.debug(listwords)
+
         try:
             self.env.start()
             switches = self.env.list_switches()
             LOGGER.debug("Wemo switches:")
             LOGGER.debug(switches)
             for switch in switches:
-                self.speak("Wemo switch ", switch)
+                self.speak("Wemo switch "+ switch)
         except:
             LOGGER.debug("Error occurred listing Wemo switches")
             self.speak("arh. ah.")
