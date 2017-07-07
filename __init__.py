@@ -61,7 +61,7 @@ class WemoSkill(MycroftSkill):
 
         self.env = Environment(self.on_switch, self.on_motion)
         self.env.start()
-        self.env.discover(seconds=15)
+        self.env.discover(seconds=5)
 
         self.load_data_files(dirname(__file__))
         prefixes = [
@@ -125,7 +125,7 @@ class WemoSkill(MycroftSkill):
         try:
             self.env = Environment(self.on_switch, self.on_motion)
             self.env.start()
-            self.env.discover(seconds=15)
+            self.env.discover(seconds=5)
 
         except:
             LOGGER.debug("Error occurred discovering Wemo devices")
