@@ -118,7 +118,7 @@ class WemoSkill(MycroftSkill):
             num_switches = len(switches)
 
             if num_switches > 0:
-                self.speak("I found " + num_switches + " wemo switches.")
+                self.speak("I found " + str(num_switches) + " wemo switches.")
             else:
                 self.speak("I didn't find any wemo switches")
 
