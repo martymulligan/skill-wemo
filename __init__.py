@@ -122,13 +122,12 @@ class WemoSkill(MycroftSkill):
             else:
                 self.speak("I didn't find any wemo switches")
 
-            i = 1
             for switch in switches:
-                self.speak("Wemo switch number "+ i + "is named " + switch)
-                i=i+1
+                self.speak(switch)
+
         except:
             LOGGER.debug("Error occurred listing Wemo switches")
-            self.speak("arh. ah.")
+            self.speak("uh. ah.")
 
 
 
