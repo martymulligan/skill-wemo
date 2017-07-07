@@ -111,9 +111,10 @@ class WemoSkill(MycroftSkill):
         try:
             self.env.start()
             switches = self.env.list_switches()
-            LOGGER.debug("Wemo switches: ", switches);
+            LOGGER.debug("Wemo switches:")
+            LOGGER.debug(switches)
             for switch in switches:
-                self.speak("Wemo switch ".switch)
+                self.speak("Wemo switch ", switch)
         except:
             LOGGER.debug("Error occurred listing Wemo switches")
             self.speak("arh. ah.")
