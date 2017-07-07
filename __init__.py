@@ -118,15 +118,16 @@ class WemoSkill(MycroftSkill):
             num_switches = len(switches)
 
             if num_switches > 0:
-                self.speak("I found "+num_switches+" wemo switches.")
+                self.speak("I found " + num_switches + " wemo switches.")
             else:
                 self.speak("I didn't find any wemo switches")
 
             for switch in switches:
                 self.speak(switch)
 
-        except:
-            LOGGER.debug("Error occurred listing Wemo switches")
+        except Exception as e:
+            LOGGER.debug("Error occurred listing Wemo switches: "+e.message)
+            LOGGER.debug(e)
             self.speak("uh. ah.")
 
 
