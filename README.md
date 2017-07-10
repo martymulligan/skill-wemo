@@ -1,19 +1,38 @@
-# skill-wemo skill
+# Wemo Skill
 
-This skill toggles a wemo smart plug
+Detection and control of Wemo devices
 
-To get this done we need
-  - Ouimeaux https://github.com/iancmcc/ouimeaux
-  - python-setuptools python-dev python-pip
+## Requirements:
+- python2 + pip / development libraries
+- [ouimeaux](http://ouimeaux.readthedocs.io/en/latest/) - open source WeMo Control
+
+## Installing:
+These have only been tested on a picroft build but
+they should basically work on debian flavors generally:
+```
+cd /PATH/TO/SKILLS/
+
+git clone https://github.com/martymulligan/mycroft-skill-wemo.git
+
+cd mycroft-skill-wemo
+
+source requirements.sh
+
+sudo pip install -r requirements.txt
+```
 
 
 ## Current state
 
 Working features:
- - ...
+ - **discover wemo devices** or **discover my devices**
+ - **list wemo devices**
+ - **toggle *\<device-name\>***
+
 
 Known issues:
- - ...
+ - None
 
-TODO:
- - ...
+Up Next:
+ - Implement motion devices
+ - Implement "On" and "Off" explicitly
