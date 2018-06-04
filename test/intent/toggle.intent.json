@@ -1,0 +1,4 @@
+{
+  "utterance": "toggle fake thing",
+  "expected_response": "I don't know a device called fake thing"
+}

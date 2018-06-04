@@ -26,33 +26,35 @@ class WemoSkill(MycroftSkill):
 
     def get_device(self, name):
         device = next((dev for dev in self.devices if dev.name == name), None)
-        if(device is None):
-            raise ValueError("I don't know a device called "+name)
         return device
+
+    def unknown_device(self, name):
+        self.speak("I don't know a device called "+name)
 
     @intent_file_handler('switch.on.intent')
     def handle_switch_on(self, message):
         if 'device' not in message.data:
             self.speak("I don't know that device");
             return
-        try:
-            requested_device = message.data["device"];
-            device = self.get_device(requested_device)
+        requested_device = message.data["device"];
+        device = self.get_device(requested_device)
+        if device is not None:
             device.on()
-        except ValueError as e:
-            self.speak(e)
+        else:
+            self.unknown_device(requested_device)
 
     @intent_file_handler('switch.off.intent')
     def handle_switch_off(self, message):
         if 'device' not in message.data:
             self.speak("I don't know that device");
             return
-        try:
-            requested_device = message.data.get("device");
-            device = self.get_device(requested_device)
+
+        requested_device = message.data.get("device");
+        device = self.get_device(requested_device)
+        if device is not None:
             device.off()
-        except ValueError as e:
-            self.speak(repr(e))
+        else:
+            self.unknown_device(requested_device)
 
     @intent_file_handler('toggle.intent')
     def handle_wemo_toggle_intent(self, message):
@@ -62,7 +64,7 @@ class WemoSkill(MycroftSkill):
             if device is not None:
                 device.toggle()
             else:
-                self.speak("I don't know a device called ", device)
+                self.speak("I don't know a device called " + requested_device)
 
         except Exception as e:
             LOGGER.debug("WemoSkill caught an exception" + repr(e))
@@ -70,15 +72,13 @@ class WemoSkill(MycroftSkill):
 
     @intent_file_handler('list.intent')
     def handle_wemo_list_intent(self, message):
-        try:
-            for device in self.devices:
-                feedback = "There is a %s named %s at %s" % (device.model_name, device.name, device.host)
-                self.speak(feedback)
+        if len(self.devices) < 1:
+            self.speak("There are no we mo devices available")
+            return
 
-        except Exception as e:
-            LOGGER.debug("Error occurred listing Wemo devices: " + e)
-            LOGGER.debug(e)
-            self.speak("An error occurred getting the device list")
+        for device in self.devices:
+            feedback = "There is a we mo %s named %s at %s" % (device.model_name, device.name, device.host)
+            self.speak(feedback)
 
 
     @intent_file_handler('discover.intent')

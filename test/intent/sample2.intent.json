@@ -1,7 +1,0 @@
-{
-  "utterance": "Discover My Devices",
-  "intent_type": "WemoSkill:WemoDiscoverIntent",
-  "intent": {
-    "SpeakKeyword": "discover my devices",
-  }
-}
